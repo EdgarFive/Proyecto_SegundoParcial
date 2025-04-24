@@ -21,99 +21,13 @@ public class VentanaCompra extends JFrame {
         this.usuario = usuario;
         this.conexion = new ConexionNeo4j("bolt://localhost:7687", "neo4j", "neo4j123");
 
-        setTitle("Sistema de Recomendación - " + usuario);
-        setSize(600, 500);
+        setTitle("Compra de productos - " + usuario);
+        setSize(500, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setLayout(new FlowLayout());
+        setLocationRelativeTo(null);  // Centrar ventana
 
-        // Panel principal con color de fondo oscuro
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBackground(new Color(40, 40, 40));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
-
-        // Panel superior para la selección de productos
-        JPanel selectionPanel = new JPanel();
-        selectionPanel.setLayout(new BoxLayout(selectionPanel, BoxLayout.Y_AXIS));
-        selectionPanel.setBackground(new Color(40, 40, 40));
-        selectionPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Título
-        JLabel titleLabel = new JLabel("Selecciona un producto");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Estilizar el combo
-        comboProductos = new JComboBox<>();
-        comboProductos.setPreferredSize(new Dimension(400, 40));
-        comboProductos.setMaximumSize(new Dimension(400, 40));
-        comboProductos.setBackground(new Color(60, 60, 60));
-        comboProductos.setForeground(Color.WHITE);
-        comboProductos.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-
-        // Cargar productos
-        List<String> productos = obtenerProductosDisponibles();
-        if (productos.isEmpty()) {
-            comboProductos.addItem("No hay productos disponibles");
-        } else {
-            for (String producto : productos) {
-                comboProductos.addItem(producto);
-            }
-        }
-
-        // Botón de comprar
-        JButton botonComprar = new JButton("Comprar");
-        botonComprar.setPreferredSize(new Dimension(200, 40));
-        botonComprar.setMaximumSize(new Dimension(200, 40));
-        botonComprar.setBackground(new Color(255, 69, 69));
-        botonComprar.setForeground(Color.WHITE);
-        botonComprar.setBorderPainted(false);
-        botonComprar.setFocusPainted(false);
-        botonComprar.setFont(new Font("Arial", Font.BOLD, 14));
-        botonComprar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        botonComprar.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Área de recomendaciones
-        JLabel recoLabel = new JLabel("Recomendaciones");
-        recoLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        recoLabel.setForeground(Color.WHITE);
-        recoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        areaRecomendaciones = new JTextArea(10, 40);
-        areaRecomendaciones.setEditable(false);
-        areaRecomendaciones.setBackground(new Color(60, 60, 60));
-        areaRecomendaciones.setForeground(Color.WHITE);
-        areaRecomendaciones.setFont(new Font("Arial", Font.PLAIN, 14));
-        JScrollPane scroll = new JScrollPane(areaRecomendaciones);
-        scroll.setPreferredSize(new Dimension(400, 200));
-        scroll.setMaximumSize(new Dimension(400, 200));
-        scroll.setBorder(BorderFactory.createLineBorder(new Color(80, 80, 80)));
-
-        // Mantener el ActionListener existente
-        botonComprar.addActionListener(e -> {
-            String productoSeleccionado = (String) comboProductos.getSelectedItem();
-            if (realizarCompra(productoSeleccionado)) {
-                mostrarRecomendaciones();
-                actualizarProductosDisponibles();
-            }
-        });
-
-        // Agregar componentes al panel de selección
-        selectionPanel.add(titleLabel);
-        selectionPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        selectionPanel.add(comboProductos);
-        selectionPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        selectionPanel.add(botonComprar);
-        selectionPanel.add(Box.createRigidArea(new Dimension(0, 30)));
-        selectionPanel.add(recoLabel);
-        selectionPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        selectionPanel.add(scroll);
-
-        // Agregar el panel de selección al panel principal
-        mainPanel.add(selectionPanel);
-
-        // Agregar WindowListener existente
+        // Agregar WindowListener para cerrar la conexión
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -123,8 +37,40 @@ public class VentanaCompra extends JFrame {
             }
         });
 
-        // Agregar panel principal al frame
-        add(mainPanel);
+        JLabel etiqueta = new JLabel("Selecciona un producto para comprar:");
+        comboProductos = new JComboBox<>();
+
+        // Cargar productos disponibles desde Neo4j
+        List<String> productos = obtenerProductosDisponibles();
+        System.out.println("Productos encontrados: " + productos.size());  // Debug
+        
+        if (productos.isEmpty()) {
+            comboProductos.addItem("No hay productos disponibles");
+        } else {
+            for (String producto : productos) {
+                comboProductos.addItem(producto);
+                System.out.println("Agregando producto: " + producto);  // Debug
+            }
+        }
+
+        JButton botonComprar = new JButton("Comprar");
+        botonComprar.addActionListener(e -> {
+            String productoSeleccionado = (String) comboProductos.getSelectedItem();
+            if (realizarCompra(productoSeleccionado)) {
+                mostrarRecomendaciones();
+                actualizarProductosDisponibles();
+            }
+        });
+
+        areaRecomendaciones = new JTextArea(10, 40);
+        areaRecomendaciones.setEditable(false);
+        JScrollPane scroll = new JScrollPane(areaRecomendaciones);
+
+        add(etiqueta);
+        add(comboProductos);
+        add(botonComprar);
+        add(scroll);
+
         setVisible(true);
     }
 
