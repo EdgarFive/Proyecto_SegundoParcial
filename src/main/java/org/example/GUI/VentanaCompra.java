@@ -134,9 +134,9 @@ public class VentanaCompra extends JFrame {
                     .run("MATCH (p:Producto) WHERE p.stock > 0 RETURN p.nombre",
                             org.neo4j.driver.Values.parameters());
             
-            List<String> productos = result.list(record -> record.get("p.nombre").asString());
-            System.out.println("Productos con stock encontrados: " + productos.size());
-            return productos;
+                        List<String> productos = result.list(record -> record.get("p.nombre").asString());
+                        System.out.println("Productos con stock encontrados: " + productos.size());
+                        return productos;
         } catch (Exception e) {
             System.err.println("Error al obtener productos: " + e.getMessage());
             return new ArrayList<>();
