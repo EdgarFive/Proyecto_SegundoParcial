@@ -45,7 +45,7 @@ public class VentanaPrincipal extends JFrame {
             comboUsuarios.addItem("No hay usuarios disponibles");
         }
 
-        // Botón de continuar más compacto
+        // Botón de continuar
         JButton botonConfirmar = new JButton("Log in");
         botonConfirmar.setPreferredSize(new Dimension(240, 35));
         botonConfirmar.setMaximumSize(new Dimension(240, 35));

@@ -128,6 +128,7 @@ public class VentanaCompra extends JFrame {
         setVisible(true);
     }
 
+    //Obtenemos la lista de los productos con stock mayor a 0
     private List<String> obtenerProductosDisponibles() {
         try {
             var result = conexion.getSession()
@@ -188,6 +189,7 @@ public class VentanaCompra extends JFrame {
         }
     }
 
+    //Actualizar el combobox de los productos.
     private void actualizarProductosDisponibles() {
         comboProductos.removeAllItems();
         List<String> productos = obtenerProductosDisponibles();

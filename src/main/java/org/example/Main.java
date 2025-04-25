@@ -23,8 +23,10 @@ public class Main {
             // Añade esta línea para debug
             System.out.println("Total usuarios encontrados: " + usuarios.size());
         }
-
         conexion.close();
+
+
+
 
         // Iniciar interfaz gráfica
         SwingUtilities.invokeLater(() -> new VentanaPrincipal(usuarios));
